@@ -1,0 +1,61 @@
+enable
+configure terminal
+
+hostname L3Switch-Two
+ip routing
+file prompt quiet
+
+! --- Uplink to Router-Two (PRIMARY) via e1/Gi0/1 ---
+interface GigabitEthernet0/1
+ description LINK_TO_ROUTER_TWO_PRIMARY
+ no switchport
+ ip address 10.1.2.2 255.255.255.252
+ no shutdown
+exit
+
+! --- Uplink to Router-One (BACKUP) via e0/Gi0/0 ---
+interface GigabitEthernet0/0
+ description LINK_TO_ROUTER_ONE_BACKUP
+ no switchport
+ ip address 10.1.4.2 255.255.255.252
+ no shutdown
+exit
+
+! --- Inter-Switch Link to L3Switch-One via e2/Gi0/2 ---
+interface GigabitEthernet0/2
+ description LINK_TO_L3SWITCH_ONE
+ no switchport
+ ip address 10.1.5.2 255.255.255.252
+ no shutdown
+exit
+
+! --- Trunk to Access Layer Switch via e3/Gi0/3 ---
+interface GigabitEthernet0/3
+ description TRUNK_TO_ACCESS_LAYER
+ no shutdown
+exit
+
+interface GigabitEthernet0/3.30
+ description FINANCE_VLAN_GATEWAY
+ encapsulation dot1Q 30
+ ip address 192.168.22.2 255.255.255.0
+ no shutdown
+exit
+
+interface GigabitEthernet0/3.40
+ description SALES_VLAN_GATEWAY
+ encapsulation dot1Q 40
+ ip address 192.168.23.2 255.255.255.0
+ no shutdown
+exit
+
+! --- Routing to L3Switch-One VLANs (IT & HR) ---
+ip route 192.168.20.0 255.255.255.0 10.1.5.1
+ip route 192.168.21.0 255.255.255.0 10.1.5.1
+
+! --- Default Routes ---
+ip route 0.0.0.0 0.0.0.0 10.1.2.1
+ip route 0.0.0.0 0.0.0.0 10.1.4.1 250
+
+end
+write memory

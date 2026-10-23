@@ -1,0 +1,39 @@
+enable
+configure terminal
+
+hostname Router-Two
+file prompt quiet
+
+! --- Downlink to L3Switch-Two (Primary) via e1/Gi0/1 ---
+interface GigabitEthernet0/1
+ description LINK_TO_L3SWITCH_TWO_PRIMARY
+ ip address 10.1.2.1 255.255.255.252
+ no shutdown
+exit
+
+! --- Downlink to L3Switch-One (Backup) via e0/Gi0/0 ---
+interface GigabitEthernet0/0
+ description LINK_TO_L3SWITCH_ONE_BACKUP
+ ip address 10.1.3.1 255.255.255.252
+ no shutdown
+exit
+
+! --- Upstream Link toward OPNsense (Placeholder) ---
+! interface GigabitEthernet0/2
+!  description LINK_TO_OPNSENSE
+!  ip address 10.10.10.3 255.255.255.0
+!  no shutdown
+! exit
+
+! --- Routes to Internal Subnets ---
+ip route 192.168.22.0 255.255.255.0 10.1.2.2
+ip route 192.168.23.0 255.255.255.0 10.1.2.2
+ip route 192.168.20.0 255.255.255.0 10.1.2.2
+ip route 192.168.21.0 255.255.255.0 10.1.2.2
+
+! Backup routes to L3Switch-One's subnets directly via backup link
+ip route 192.168.20.0 255.255.255.0 10.1.3.2 250
+ip route 192.168.21.0 255.255.255.0 10.1.3.2 250
+
+end
+write memory

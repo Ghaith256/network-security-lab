@@ -1,0 +1,16 @@
+
+# GNS3 runtime files and virtual machine disks
+topology/project-files/
+
+# Sensitive files
+configs/Cheat Sheet/
+*.env
+secrets.*
+credentials.*
+*.pem
+*.key
+
+# Operating system clutter
+.DS_Store
+Thumbs.db
+*.swp
