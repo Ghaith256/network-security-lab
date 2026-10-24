@@ -1,4 +1,4 @@
-# Gate Guardian, GNS3 Network Security Lab
+# Operation Phantom Web, GNS3 Network Security Lab
 
 This is a network security lab I built in GNS3. It has different zones, and it shows how layered defense works, a firewall, an intrusion detection system, a honeypot that tricks attackers, and a logging system that saves everything. I also ran a full attack on it to test if the defenses actually work.
 
@@ -264,16 +264,16 @@ This is what I know for certain, and how to check the rest on your own build, si
 | Oracle VirtualBox    | 7.0                                  | Confirmed, shown in VirtualBox under Help, then About VirtualBox, gives the exact build number too |
 | Splunk Enterprise    | 9.2.1                                | Confirmed, this was the exact version downloaded during setup (`splunk-9.2.1-...-amd64.deb`), also visible once installed, log in and check the bottom of any page, or run `/opt/splunk/bin/splunk version` |
 | Kali Linux           | 2026.1                               | Confirmed, this was the base image filename used (`kali-linux-2026.1-virtualbox-amd64`) |
-| OPNsense             | Not recorded                         | Check it yourself, log into the web interface, the version shows on the Dashboard page, or go to System, then Firmware, then Status |
-| Snort                | Not recorded, but it is Snort 3 (uses `snort3-master` and `snort.lua`) | Check it yourself, run `snort -V` on the Snort VM |
-| Cowrie               | Not recorded                         | Check it yourself, inside the Cowrie folder run `cat cowrie/VERSION` if that file exists, or check the git log with `git log -1` if it was cloned from GitHub |
-| FreeRADIUS           | Not recorded, installed via `apt install freeradius` on Ubuntu | Check it yourself, run `freeradius -v` on the AAA server |
-| Ubuntu Server (base image for Web, Mail, Honeypot, Snort, AAA) | Not recorded | Check it yourself, run `lsb_release -a` or `cat /etc/os-release` on any of those VMs |
-| Cisco vIOS (routers and L3 switches) | Not recorded | Check it yourself, console into the device and run `show version` |
-| Apache (Web Server)  | Not recorded                         | Check it yourself, run `apache2 -v` |
-| Postfix (Mail Server) | Not recorded                        | Check it yourself, run `postconf mail_version` |
+| OPNsense             | 26.1.6_2-amd64 (FreeBSD 14.3-RELEASE-p10, OpenSSL 3.0.20) | Confirmed, shown on the Dashboard (Lobby) page right under "Versions" |
+| Snort                | 3.12.2.0                             | Confirmed, run `snort -V` on the Snort VM |
+| Cowrie               | Git commit `c7773f4`, dated October 15, 2026 | Confirmed, no `VERSION` file exists in this build, so the exact commit is the most precise identifier. Check it yourself with `git log -1` inside the cowrie folder |
+| FreeRADIUS           | 3.2.7                                | Confirmed, run `freeradius -v` on the AAA server |
+| Ubuntu Server (base image for Web, Mail, Honeypot, Snort, AAA) | 25.10, kernel 6.17.0-23-generic | Confirmed, shown right in the login banner of every Ubuntu based VM, no command needed, it is printed every time you log in |
+| Cisco vIOS, Router One, Router Two, L3Switch One, L3Switch Two | IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.6(2)T, RELEASE SOFTWARE (fc2) | Confirmed, same version on all four devices, run `show version` on any device console |
+| Apache (Web Server)  | 2.4.64 (Ubuntu)                      | Confirmed, run `apache2 -v` |
+| Postfix (Mail Server) | 3.10.2                              | Confirmed, run `postconf mail_version` |
 
-If you are rebuilding this lab, I would recommend running these version check commands on your own build and filling this table in properly, it makes the documentation far more useful to anyone trying to reproduce your results exactly.
+Everything above is now confirmed.
 
 ## Notes and Known Limitations
 
