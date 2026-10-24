@@ -1,4 +1,4 @@
-# Operation Phantom Web, GNS3 Network Security Lab
+# Gate Guardian, GNS3 Network Security Lab
 
 This is a network security lab I built in GNS3. It has different zones, and it shows how layered defense works, a firewall, an intrusion detection system, a honeypot that tricks attackers, and a logging system that saves everything. I also ran a full attack on it to test if the defenses actually work.
 
