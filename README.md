@@ -241,18 +241,18 @@ index=main sourcetype=syslog
 | OPNsense          | DMZ             | 192.168.30.1/24      | DMZ zone              |
 | Router One        | gi0/0           | 10.0.0.2/30           | OPNsense link         |
 | Router Two        | gi0/0           | 10.0.0.6/30           | OPNsense link         |
-| Web Server         | n/a             | 192.168.30.10/24     | Apache HTTP/HTTPS    |
-| Mail Server        | n/a             | 192.168.30.20/24     | Postfix SMTP          |
-| Honeypot           | n/a             | 192.168.30.30/24     | Cowrie SSH trap       |
+| Web Server         | ---           | 192.168.30.10/24     | Apache HTTP/HTTPS    |
+| Mail Server        | ---             | 192.168.30.20/24     | Postfix SMTP          |
+| Honeypot           | ---             | 192.168.30.30/24     | Cowrie SSH trap       |
 | Snort              | br0             | 192.168.30.40/24     | Inline IPS bridge    |
-| Splunk             | n/a             | 192.168.100.10/24    | SIEM, port 8000       |
-| AAA Server         | n/a             | 192.168.100.20/24    | FreeRADIUS, port 1812 |
-| Attacker Machine   | n/a             | 10.10.10.2/24          | Attack simulation     |
-| HR VLAN            | n/a             | 192.168.20.0/24      | Internal users        |
-| IT VLAN            | n/a             | 192.168.21.0/24      | Internal users        |
-| Finance VLAN       | n/a             | 192.168.22.0/24      | Internal users        |
-| Sales VLAN         | n/a             | 192.168.23.0/24      | Internal users        |
-| VPN Tunnel         | n/a             | 10.8.0.0/24            | OpenVPN clients       |
+| Splunk             | ---             | 192.168.100.10/24    | SIEM, port 8000       |
+| AAA Server         | ---             | 192.168.100.20/24    | FreeRADIUS, port 1812 |
+| Attacker Machine   | ---             | 10.10.10.2/24          | Attack simulation     |
+| HR VLAN            | ---             | 192.168.20.0/24      | Internal users        |
+| IT VLAN            | ---             | 192.168.21.0/24      | Internal users        |
+| Finance VLAN       | ---             | 192.168.22.0/24      | Internal users        |
+| Sales VLAN         | ---             | 192.168.23.0/24      | Internal users        |
+| VPN Tunnel         | ---             | 10.8.0.0/24            | OpenVPN clients       |
 
 ## Software and Image Versions
 
