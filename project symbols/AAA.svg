@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <!-- 
+        AAA Server SVG Icon
+        Palette: Blue (#2A7FFF), Dark Gray (#2E3440)
+        Concept: Infrastructure (Server Stack) + Security (Shield/Lock) + Control (Check) + Logging (Activity/Database)
+    -->
+    <defs>
+        <clipPath id="log-clip">
+            <rect x="360" y="325" width="40" height="70" />
+        </clipPath>
+    </defs>
+    <g id="AAA_Server_Icon" transform="translate(16, 16) scale(0.9375)">
+        
+        <!-- === Main Server Body & Infrastructure === -->
+        <path id="server_structure" d="M30 110 L256 10 L482 110 V402 L256 502 L30 402 Z" fill="#2E3440" stroke="#2A7FFF" stroke-width="12" stroke-linejoin="round" />
+        
+        <!-- === Top "AAA" Text (Integrated into Server Top) === -->
+        <g id="aaa_text" fill="#FFFFFF">
+            <!-- A 1 -->
+            <path d="M190 140 H205 L230 200 H215 L210 188 H185 L180 200 H165 Z M188 180 H207 L197 155 Z" />
+            <!-- A 2 -->
+            <path d="M248 140 H263 L288 200 H273 L268 188 H243 L238 200 H223 Z M246 180 H265 L255 155 Z" />
+            <!-- A 3 -->
+            <path d="M306 140 H321 L346 200 H331 L326 188 H301 L296 200 H281 Z M304 180 H323 L313 155 Z" />
+        </g>
+        
+        <!-- === Security Panel (Center) === -->
+        <g id="security_panel" transform="translate(180, 230)">
+            <!-- Authentication (Outer Shield/Lock) -->
+            <path d="M0 0 H152 V120 C152 162, 76 190, 76 190 C76 190, 0 162, 0 120 Z" fill="#2A7FFF" />
+            <rect x="66" y="25" width="20" height="25" rx="5" fill="#2E3440" />
+            <circle cx="76" cy="65" r="12" fill="#2E3440" />
+            
+            <!-- Authorization (Inner Checkmark) -->
+            <path id="authorization_check" d="M110 50 L76 125 L60 95" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        
+        <!-- === Accounting / Logging (Bottom Panel) === -->
+        <g id="accounting_logging" transform="translate(100, 310)">
+            <!-- Database Cylinder Reference -->
+            <ellipse cx="60" cy="30" rx="30" ry="10" fill="none" stroke="#2A7FFF" stroke-width="8" />
+            <path d="M30 30 V110 A30 10 0 0 0 90 110 V30" fill="none" stroke="#2A7FFF" stroke-width="8" />
+            
+            <!-- Activity / Log Lines -->
+            <g transform="translate(130, 15)" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round">
+                <line x1="0" y1="0" x2="160" y2="0" />
+                <line x1="0" y1="30" x2="110" y2="30" />
+                <line x1="130" y1="30" x2="160" y2="30" />
+                <line x1="0" y1="60" x2="160" y2="60" />
+                <line x1="0" y1="90" x2="70" y2="90" />
+            </g>
+        </g>
+        
+        <!-- === Network Connection Ports === -->
+        <g id="network_ports" fill="#2A7FFF">
+            <circle cx="80" cy="460" r="15" />
+            <circle cx="160" cy="460" r="15" />
+            <circle cx="352" cy="460" r="15" />
+            <circle cx="432" cy="460" r="15" />
+        </g>
+        
+    </g>
+</svg>
